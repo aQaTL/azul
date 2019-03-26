@@ -121,6 +121,8 @@ impl FontId {
 pub enum ImageSource {
     /// The image is embedded inside the binary file
     Embedded(&'static [u8]),
+    /// The image is in a memory buffer
+    InMemory(Vec<u8>),
     /// The image is loaded from a file
     File(PathBuf),
 }
@@ -181,6 +183,7 @@ impl ImageSource {
         use self::ImageSource::*;
         match self {
             Embedded(bytes) => Ok(bytes.to_vec()),
+            InMemory(vec) => Ok(vec.clone()),
             File(file_path) => fs::read(file_path).map_err(|e| ImageReloadError::Io(e, file_path.clone())),
         }
     }
